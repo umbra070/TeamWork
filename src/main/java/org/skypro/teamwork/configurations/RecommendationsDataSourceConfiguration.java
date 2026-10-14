@@ -15,14 +15,20 @@ import javax.sql.DataSource;
 public class RecommendationsDataSourceConfiguration {
     Logger logger = LoggerFactory.getLogger(RecommendationsDataSourceConfiguration.class);
     @Bean(name = "recommendationsDataSource")
-    public DataSource recommendationsDataSource(@Value("${application.recommendations-db.url}") String recommendationsDBUrl){
+    public DataSource recommendationsDataSource(
+            @Value("${application.recommendations-db.url}") String url,
+            @Value("${application.recommendations-db.username}") String username,
+            @Value("${application.recommendations-db.password}") String password
+    ){
         try{
             HikariDataSource dataSource = new HikariDataSource();
-            dataSource.setJdbcUrl(recommendationsDBUrl);
+            dataSource.setJdbcUrl(url);
+            dataSource.setUsername(username);
+            dataSource.setPassword(password);
             dataSource.setDriverClassName("org.h2.Driver");
             dataSource.setReadOnly(true);
-            logger.info("Setting up Data Source with thous configuration:\n\r" +
-                    "" + recommendationsDBUrl);
+            logger.info("Setting up Data Source with thous configuration:\n\rURL: " +
+                    "" + url + "\n\rUser Name: " + username);
             return dataSource;
         } catch (Exception e) {
             logger.error(e.getMessage());
