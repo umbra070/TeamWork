@@ -71,10 +71,17 @@ public class TelegramBotService {
             return;
         }
 
-        String[] parts = arg.split("\\s+", 2);
-        List<UUID> found = (parts.length == 2)
-                ? recommendationsRepository.findUserIdsByFullName(parts[0], parts[1])
-                : recommendationsRepository.findUserIdsByName(parts[0]);
+        String[] parts = arg.split("\\s+");
+        if (parts.length != 2) {
+            bot.execute(new SendMessage(chatId, "Пользователь не найден"));
+            return;
+        }
+
+        List<UUID> found = recommendationsRepository.findUserIdsByFullName(parts[0], parts[1]);
+        if (found.size() != 1) {
+            bot.execute(new SendMessage(chatId, "Пользователь не найден"));
+            return;
+        }
 
         if (found.size() != 1) {
             bot.execute(new SendMessage(chatId, "Пользователь не найден"));
