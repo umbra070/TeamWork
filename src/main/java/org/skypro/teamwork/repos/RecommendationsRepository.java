@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -35,15 +36,27 @@ public class RecommendationsRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // === Публичные методы — по одному на «правило» из ТЗ ===
+    public List<UUID> findUserIdsByFullName(String firstName, String lastName) {
+        String sql = """
+            SELECT id FROM users
+            WHERE LOWER(first_name) = LOWER(?)
+              AND LOWER(last_name)  = LOWER(?)
+            """;
+        return jdbcTemplate.queryForList(sql, UUID.class, firstName, lastName);
+    }
 
-    /** USER_OF: есть ли у пользователя хотя бы одна транзакция по продукту указанного типа. */
+
     public boolean existsUserProductType(UUID userId, String productType) {
         return countTransactionsByProductType(userId, productType) > 0;
     }
 
     public boolean doesNotUseProductType(UUID userId, String productType) {
         return !existsUserProductType(userId, productType);
+    }
+
+    public void clearAllCaches() {
+        transactionCountCache.invalidateAll();
+        transactionSumCache.invalidateAll();
     }
 
     /** ACTIVE_USER_OF: 5+ транзакций по продукту указанного типа. */

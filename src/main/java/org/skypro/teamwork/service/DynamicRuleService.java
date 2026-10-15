@@ -14,6 +14,8 @@ import java.util.UUID;
 public class DynamicRuleService {
     @Autowired
     private DynamicRuleRepository drRepository;
+    @Autowired
+    private RuleStatsService ruleStatsService;
 
     @Transactional
     public DynamicRuleDto create(DynamicRuleDto dto){
@@ -23,6 +25,7 @@ public class DynamicRuleService {
         entity.setProductId(dto.getProductId());
         entity.setRule(dto.getRule());
         DynamicRuleEntity saved = drRepository.save(entity);
+        ruleStatsService.initForRule(saved);
         return toDto(saved);
     }
 
