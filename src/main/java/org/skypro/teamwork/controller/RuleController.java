@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.skypro.teamwork.dto.DynamicRuleDto;
 import org.skypro.teamwork.repos.DynamicRuleRepository;
 import org.skypro.teamwork.service.DynamicRuleService;
+import org.skypro.teamwork.service.RuleStatsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,8 @@ import java.util.UUID;
 public class RuleController {
     @Autowired
     private DynamicRuleService drService;
+    @Autowired
+    private RuleStatsService ruleStatsService;
 
     @PostMapping
     @Operation(summary = "Создать новое динамическое правило")
@@ -31,6 +34,17 @@ public class RuleController {
     public ResponseEntity<Map<String, List<DynamicRuleDto>>> getAll(){
         return ResponseEntity.ok(Map.of("data", drService.getAllAsDto()));
     }
+
+    @GetMapping("/stats")
+    public ResponseEntity<Map<String, List<Map<String, Object>>>> stats() {
+        List<Map<String, Object>> stats = ruleStatsService.getAll().stream()
+                .map(s -> Map.<String, Object>of(
+                        "rule_id", s.getRuleId(),
+                        "count", s.getCount()))
+                .toList();
+        return ResponseEntity.ok(Map.of("stats", stats));
+    }
+
     @DeleteMapping("/{productId}")
     @Operation(summary = "Удалить правило по productId")
     public ResponseEntity<Void> delete(@PathVariable UUID productId){

@@ -3,17 +3,10 @@ package org.skypro.teamwork.service.rules;
 import org.skypro.teamwork.dto.Recommendation;
 import org.skypro.teamwork.model.DynamicRuleEntity;
 import org.skypro.teamwork.model.RuleQuery;
-import org.skypro.teamwork.repos.DynamicRuleRepository;
 import org.skypro.teamwork.repos.RecommendationsRepository;
+import org.skypro.teamwork.service.RuleStatsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.skypro.teamwork.dto.Recommendation;
-import org.skypro.teamwork.model.DynamicRuleEntity;
-import org.skypro.teamwork.model.RuleQuery;
-import org.skypro.teamwork.repos.RecommendationsRepository;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
-import java.util.UUID;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -22,6 +15,8 @@ import java.util.UUID;
 public class DynamicRuleEvaluator {
     @Autowired
     private RecommendationsRepository rRepository;
+    @Autowired
+    private RuleStatsService ruleStatsService;
 
     public Optional<Recommendation> evaluate(DynamicRuleEntity rule, UUID userId){
         for(RuleQuery query : rule.getRule()){
@@ -33,11 +28,15 @@ public class DynamicRuleEvaluator {
                 return Optional.empty();
             }
         }
+        if (rule.getId() != null) {
+            ruleStatsService.increment(rule.getId());
+        }
         return Optional.of(new Recommendation(
                 rule.getProductId(),
                 rule.getProductName(),
                 rule.getProductText()
         ));
+
     }
 
     private boolean evaluateQuery(RuleQuery query, UUID userId) {
