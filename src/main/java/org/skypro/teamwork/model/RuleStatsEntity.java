@@ -1,7 +1,10 @@
 package org.skypro.teamwork.model;
 
 import jakarta.persistence.*;
-
+/**
+ * Сущность для хранения статистики срабатываний динамических правил.
+ * Использует общий первичный ключ (Shared Primary Key) с сущностью {@link DynamicRuleEntity}.
+ */
 @Entity
 @Table(name = "rule_stats")
 public class RuleStatsEntity {
@@ -18,7 +21,8 @@ public class RuleStatsEntity {
     @JoinColumn(name = "rule_id")
     private DynamicRuleEntity rule;
 
-    public RuleStatsEntity() {}
+    public RuleStatsEntity() {
+    }
 
     public Long getRuleId() {
         return ruleId;

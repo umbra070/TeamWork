@@ -1,6 +1,5 @@
 package org.skypro.teamwork.service;
 
-import org.springframework.stereotype.Service;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
@@ -9,14 +8,17 @@ import jakarta.annotation.PostConstruct;
 import org.skypro.teamwork.dto.Recommendation;
 import org.skypro.teamwork.dto.RecommendationResponse;
 import org.skypro.teamwork.repos.RecommendationsRepository;
-import org.skypro.teamwork.service.RecommendationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-
+/**
+ * Сервис Telegram-бота для выдачи рекомендаций по имени пользователя.
+ * Запускает long-polling при старте приложения.
+ */
 @Service
 public class TelegramBotService {
     private static final Logger log = LoggerFactory.getLogger(TelegramBotService.class);
@@ -34,6 +36,10 @@ public class TelegramBotService {
         this.recommendationsRepository = recommendationsRepository;
     }
 
+    /**
+     * Инициализирует прослушивание входящих сообщений от Telegram API.
+     * Вызывается автоматически после создания бина.
+     */
     @PostConstruct
     public void start() {
         bot.setUpdatesListener(this::onUpdate, e -> log.error("Bot error", e));
@@ -51,6 +57,12 @@ public class TelegramBotService {
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
+    /**
+     * Обрабатывает входящее сообщение от пользователя.
+     * Если это команда /recommend, ищет пользователя и выдает рекомендации, иначе отправляет справку.
+     *
+     * @param update объект обновления от Telegram API
+     */
     private void handle(Update update) {
         if (update.message() == null || update.message().text() == null) return;
         long chatId = update.message().chat().id();
@@ -109,7 +121,7 @@ public class TelegramBotService {
         bot.execute(new SendMessage(chatId, """
                 Привет! Я бот банка «Стар».
                 Помогу подобрать банковские продукты.
-
+                
                 Команды:
                 /recommend Имя Фамилия — получить рекомендации
                 """));

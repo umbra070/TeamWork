@@ -1,7 +1,6 @@
 package org.skypro.teamwork.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.skypro.teamwork.repos.RecommendationsRepository;
 
 import java.util.UUID;
 

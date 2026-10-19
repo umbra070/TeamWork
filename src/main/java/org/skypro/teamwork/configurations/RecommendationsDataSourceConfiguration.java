@@ -14,13 +14,14 @@ import javax.sql.DataSource;
 @Configuration
 public class RecommendationsDataSourceConfiguration {
     Logger logger = LoggerFactory.getLogger(RecommendationsDataSourceConfiguration.class);
+
     @Bean(name = "recommendationsDataSource")
     public DataSource recommendationsDataSource(
             @Value("${application.recommendations-db.url}") String url,
             @Value("${application.recommendations-db.username}") String username,
             @Value("${application.recommendations-db.password}") String password
-    ){
-        try{
+    ) {
+        try {
             HikariDataSource dataSource = new HikariDataSource();
             dataSource.setJdbcUrl(url);
             dataSource.setUsername(username);
@@ -37,8 +38,8 @@ public class RecommendationsDataSourceConfiguration {
     }
 
     @Bean(name = "recommendationsJdbcTemplate")
-    public JdbcTemplate recommendationsJdbcTemplate(@Qualifier("recommendationsDataSource") DataSource dataSource){
-        try{
+    public JdbcTemplate recommendationsJdbcTemplate(@Qualifier("recommendationsDataSource") DataSource dataSource) {
+        try {
             return new JdbcTemplate(dataSource);
         } catch (Exception e) {
             logger.error(e.getMessage());

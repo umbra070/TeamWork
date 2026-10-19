@@ -6,8 +6,11 @@ import org.hibernate.type.SqlTypes;
 
 import java.util.List;
 import java.util.UUID;
-
-@Table(name="dynamic_rule")
+/**
+ * Сущность динамического правила рекомендации.
+ * Поле {@code rule} хранится в базе данных в формате JSONB.
+ */
+@Table(name = "dynamic_rule")
 @Entity
 public class DynamicRuleEntity {
     @Id

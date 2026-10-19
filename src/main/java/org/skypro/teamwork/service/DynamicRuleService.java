@@ -18,7 +18,7 @@ public class DynamicRuleService {
     private RuleStatsService ruleStatsService;
 
     @Transactional
-    public DynamicRuleDto create(DynamicRuleDto dto){
+    public DynamicRuleDto create(DynamicRuleDto dto) {
         DynamicRuleEntity entity = new DynamicRuleEntity();
         entity.setProductName(dto.getProductName());
         entity.setProductText(dto.getProductText());
@@ -30,7 +30,7 @@ public class DynamicRuleService {
     }
 
     @Transactional
-    public void deleteByProductId(UUID productId){
+    public void deleteByProductId(UUID productId) {
         drRepository.deleteByProductId(productId);
     }
 
@@ -44,7 +44,7 @@ public class DynamicRuleService {
         return getAll().stream().map(this::toDto).toList();
     }
 
-    private DynamicRuleDto toDto(DynamicRuleEntity entity){
+    private DynamicRuleDto toDto(DynamicRuleEntity entity) {
         DynamicRuleDto dto = new DynamicRuleDto();
         dto.setId(entity.getId());
         dto.setProductId(entity.getProductId());

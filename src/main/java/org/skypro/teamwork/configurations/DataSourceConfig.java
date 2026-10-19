@@ -11,8 +11,8 @@ import javax.sql.DataSource;
 public class DataSourceConfig {
 
     @Primary
-    @Bean(name="defaultDataSource")
-    public DataSource defaultDataSource(DataSourceProperties properties){
+    @Bean(name = "defaultDataSource")
+    public DataSource defaultDataSource(DataSourceProperties properties) {
         return properties.initializeDataSourceBuilder().build();
     }
 }

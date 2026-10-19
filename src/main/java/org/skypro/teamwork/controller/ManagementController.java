@@ -5,12 +5,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Map;
-
+/**
+ * REST-контроллер для технологических задач: сбора информации о сервисе и сброса кеша.
+ */
 @RestController
 @RequestMapping("/management")
 public class ManagementController {
@@ -28,6 +30,12 @@ public class ManagementController {
         this.recommendationsRepository = recommendationsRepository;
     }
 
+    /**
+     * Возвращает информацию о сервисе: его название и версию из файла pom.xml.
+     * Используется для отображения в общем списке сервисов банка.
+     *
+     * @return {@link ResponseEntity} с картой, содержащей поля "name" и "version"
+     */
     @GetMapping("/info")
     public ResponseEntity<Map<String, String>> info() {
         return ResponseEntity.ok(Map.of(
@@ -36,6 +44,12 @@ public class ManagementController {
         ));
     }
 
+    /**
+     * Сбрасывает все закешированные результаты запросов к базе знаний о пользователях.
+     * Используется, когда внешняя система обновляет данные в базе.
+     *
+     * @return {@link ResponseEntity} с кодом 200 OK
+     */
     @PostMapping("/clear-caches")
     public ResponseEntity<Void> clearCaches() {
         recommendationsRepository.clearAllCaches();

@@ -9,9 +9,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.UUID;
-
+/**
+ * Правило рекомендации "Invest 500".
+ * Срабатывает, если у пользователя есть DEBIT, нет INVEST, и сумма пополнений SAVING > 1000.
+ */
 @Component
-public class Invest500Rule implements RecommendationRule{
+public class Invest500Rule implements RecommendationRule {
     private static final UUID PRODUCT_ID = UUID.fromString("147f6a0f-3b91-413b-ab99-87f081d60d5a");
     private static final String PRODUCT_NAME = "Invest 500";
     private static final String PRODUCT_TEXT = "" +
@@ -26,20 +29,24 @@ public class Invest500Rule implements RecommendationRule{
     private RecommendationsRepository rRepository;
     Logger logger = LoggerFactory.getLogger(Invest500Rule.class);
 
+    /**
+     * {@inheritDoc}
+     * Проверяет выполнение условий для выдачи рекомендации Invest 500.
+     */
     @Override
-    public Optional<Recommendation> evaluate(UUID userId){
+    public Optional<Recommendation> evaluate(UUID userId) {
         logger.info("User: " + userId);
         logger.info("Recommendation: Invest500");
-        if(!rRepository.existsUserProductType(userId, "DEBIT")){
+        if (!rRepository.existsUserProductType(userId, "DEBIT")) {
             logger.info("Status: None; Reason: No product DEBIT");
             return Optional.empty();
         }
-        if(!rRepository.doesNotUseProductType(userId, "INVEST")){
+        if (!rRepository.doesNotUseProductType(userId, "INVEST")) {
             logger.info("Status: None; Reason: Have product INVEST");
             return Optional.empty();
         }
         long savingDeposits = rRepository.sumDepositsByProductType(userId, "SAVING");
-        if(savingDeposits <= 1000){
+        if (savingDeposits <= 1000) {
             logger.info("Status: None; Reason: Product SAVING less then 1000");
             return Optional.empty();
         }

@@ -1,7 +1,10 @@
 package org.skypro.teamwork.model;
 
 import java.util.List;
-
+/**
+ * DTO, представляющий собой один атомарный запрос внутри динамического правила.
+ * Содержит тип запроса, аргументы и флаг отрицания (negate).
+ */
 public class RuleQuery {
     private String query;
     private List<String> arguments;
