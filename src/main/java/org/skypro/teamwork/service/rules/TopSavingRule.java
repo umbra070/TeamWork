@@ -9,22 +9,30 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.UUID;
-
+/**
+ * Статическое правило для рекомендации продукта "Top Saving".
+ * Условия: есть DEBIT, сумма пополнений DEBIT или SAVING >= 50000,
+ * пополнения DEBIT > трат DEBIT.
+ */
 @Component
-public class TopSavingRule implements RecommendationRule{
+public class TopSavingRule implements RecommendationRule {
     private static final UUID PRODUCT_ID = UUID.fromString("59efc529-2fff-41af-baff-90ccd7402925");
     private static final String PRODUCT_NAME = "Top Saving";
     private static final String PRODUCT_TEXT = """
-    Откройте свою собственную «Копилку» с нашим банком! «Копилка» — это уникальный банковский инструмент,
-                который поможет вам легко и удобно накапливать деньги на важные цели. Больше никаких забытых чеков и
-                потерянных квитанций — всё под контролем!
-               """;
+            Откройте свою собственную «Копилку» с нашим банком! «Копилка» — это уникальный банковский инструмент,
+                        который поможет вам легко и удобно накапливать деньги на важные цели. Больше никаких забытых чеков и
+                        потерянных квитанций — всё под контролем!
+            """;
 
     @Autowired
     private RecommendationsRepository rRepository;
 
     private Logger logger = LoggerFactory.getLogger(TopSavingRule.class);
 
+    /**
+     * {@inheritDoc}
+     * Проверяет выполнение условий для выдачи рекомендации Top Saving.
+     */
     @Override
     public Optional<Recommendation> evaluate(UUID userId) {
         logger.info("User: " + userId);
@@ -33,17 +41,17 @@ public class TopSavingRule implements RecommendationRule{
         long savingDeposit = rRepository.sumDepositsByProductType(userId, "SAVING");
         long debitWithdrawals = rRepository.sumWithdrawalsByProductType(userId, "DEBIT");
 
-        if(!rRepository.existsUserProductType(userId, "DEBIT")){
+        if (!rRepository.existsUserProductType(userId, "DEBIT")) {
             logger.info("Status: None; Reason: Has no product DEBIT");
             return Optional.empty();
         }
 
-        if(debitDeposits < 50000 && savingDeposit < 50000){
+        if (debitDeposits < 50000 && savingDeposit < 50000) {
             logger.info("Status: None; Reason: Debit deposits less than 50 000 and Saving Deposits less than 50 000");
             return Optional.empty();
         }
 
-        if(debitDeposits <= debitWithdrawals){
+        if (debitDeposits <= debitWithdrawals) {
             logger.info("Status: None; Reason: Debit Deposits less than Withdrawals");
             return Optional.empty();
         }

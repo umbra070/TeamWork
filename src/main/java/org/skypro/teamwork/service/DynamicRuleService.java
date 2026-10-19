@@ -14,20 +14,23 @@ import java.util.UUID;
 public class DynamicRuleService {
     @Autowired
     private DynamicRuleRepository drRepository;
+    @Autowired
+    private RuleStatsService ruleStatsService;
 
     @Transactional
-    public DynamicRuleDto create(DynamicRuleDto dto){
+    public DynamicRuleDto create(DynamicRuleDto dto) {
         DynamicRuleEntity entity = new DynamicRuleEntity();
         entity.setProductName(dto.getProductName());
         entity.setProductText(dto.getProductText());
         entity.setProductId(dto.getProductId());
         entity.setRule(dto.getRule());
         DynamicRuleEntity saved = drRepository.save(entity);
+        ruleStatsService.initForRule(saved);
         return toDto(saved);
     }
 
     @Transactional
-    public void deleteByProductId(UUID productId){
+    public void deleteByProductId(UUID productId) {
         drRepository.deleteByProductId(productId);
     }
 
@@ -41,7 +44,7 @@ public class DynamicRuleService {
         return getAll().stream().map(this::toDto).toList();
     }
 
-    private DynamicRuleDto toDto(DynamicRuleEntity entity){
+    private DynamicRuleDto toDto(DynamicRuleEntity entity) {
         DynamicRuleDto dto = new DynamicRuleDto();
         dto.setId(entity.getId());
         dto.setProductId(entity.getProductId());

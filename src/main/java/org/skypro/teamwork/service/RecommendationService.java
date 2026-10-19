@@ -17,7 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
+/**
+ * Основной сервис рекомендательной системы.
+ * Объединяет результаты проверки статических правил (зашитых в код) и динамических правил из БД.
+ */
 @Service
 public class RecommendationService {
     @Autowired
@@ -59,6 +62,13 @@ public class RecommendationService {
         drRepository.deleteByProductId(productId);
     }
 
+    /**
+     * Формирует итоговый список рекомендаций для пользователя.
+     * Сначала проверяются статические правила, затем динамические правила из базы данных.
+     *
+     * @param userId уникальный идентификатор пользователя
+     * @return объект {@link RecommendationResponse} с итоговым списком продуктов
+     */
     public RecommendationResponse getRecommendations(UUID userId) {
         List<Recommendation> recommendations = new ArrayList<>();
 

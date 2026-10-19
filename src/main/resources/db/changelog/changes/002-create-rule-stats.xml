@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="002-create-rule-stats" author="teamwork">
+        <createTable tableName="rule_stats">
+            <column name="rule_id" type="bigint">
+                <constraints primaryKey="true" nullable="false"
+                             foreignKeyName="fk_rule_stats_rule"
+                             references="dynamic_rule(id)"
+                             deleteCascade="true"/>
+            </column>
+            <column name="count" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

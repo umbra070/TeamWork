@@ -9,9 +9,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.UUID;
-
+/**
+ * Статическое правило для рекомендации продукта "Простой кредит".
+ * Условия: нет CREDIT, пополнения DEBIT > трат DEBIT, траты DEBIT > 100000.
+ */
 @Component
-public class SimpleCreditRule implements RecommendationRule{
+public class SimpleCreditRule implements RecommendationRule {
 
     private static final UUID PRODUCT_ID = UUID.fromString("ab138afb-f3ba-4a93-b74f-0fcee86d447f");
     private static final String PRODUCT_NAME = "Простой кредит";
@@ -25,11 +28,15 @@ public class SimpleCreditRule implements RecommendationRule{
     private RecommendationsRepository rRepository;
     Logger logger = LoggerFactory.getLogger(SimpleCreditRule.class);
 
+    /**
+     * {@inheritDoc}
+     * Проверяет выполнение условий для выдачи рекомендации Простой кредит.
+     */
     @Override
     public Optional<Recommendation> evaluate(UUID userId) {
         logger.info("User: " + userId);
         logger.info("Recommendation: Simple Credit");
-        if(!rRepository.doesNotUseProductType(userId, "CREDIT")){
+        if (!rRepository.doesNotUseProductType(userId, "CREDIT")) {
             logger.info("Status: None; Reason: Have product CREDIT");
             return Optional.empty();
         }
@@ -37,12 +44,12 @@ public class SimpleCreditRule implements RecommendationRule{
         long debitDeposits = rRepository.sumDepositsByProductType(userId, "DEBIT");
         long debitWithdrawals = rRepository.sumWithdrawalsByProductType(userId, "DEBIT");
 
-        if(debitDeposits <= debitWithdrawals){
+        if (debitDeposits <= debitWithdrawals) {
             logger.info("Status: None; Reason: Deposits less then Withdrawals");
             return Optional.empty();
         }
 
-        if(debitWithdrawals <= 100000){
+        if (debitWithdrawals <= 100000) {
             logger.info("Status: None; Reason: Withdrawals less than 100 000");
             return Optional.empty();
         }

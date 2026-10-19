@@ -1,7 +1,6 @@
 package org.skypro.teamwork.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.skypro.teamwork.model.DynamicRuleEntity;
 import org.skypro.teamwork.model.RuleQuery;
 
 import java.util.List;
